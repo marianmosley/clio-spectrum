@@ -110,7 +110,11 @@ group :test do
   gem 'guard'
   gem 'guard-rspec'
   gem 'guard-spork'
-  gem 'rspec-rails'
+  
+  # Copy Stanford's approach to Solr relevancy testing
+  gem 'rspec-solr'
+
+  # pin to old version, or go with newest?
   gem 'capybara'
   gem 'capybara-webkit'
   gem 'launchy'
