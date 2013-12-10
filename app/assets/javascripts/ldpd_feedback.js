@@ -1,8 +1,11 @@
-jQuery(function() {
+$(document).ready(function() {
 
-    LWEB.setupFeedbackDialog();
 
     $('.feedback-popup').bind('click', function(){
+        if(!LWEB.feedbackDialogIsSetup) {
+          LWEB.setupFeedbackDialog();
+          LWEB.feedbackDialogIsSetup = true;
+        }
         LWEB.showFeedbackDialog();
         return false;
     });
@@ -29,6 +32,7 @@ jQuery(function() {
 
 var LWEB = {};
 
+LWEB.feedbackDialogIsSetup = false;
 LWEB.feedbackDialogIsVisible = false;
 
 LWEB.setupFeedbackDialog = function() {
@@ -77,6 +81,11 @@ LWEB.showFeedbackDialog = function() {
 LWEB.hideFeedbackDialog = function() {
     $('#feedback_dialog').hide();
     LWEB.feedbackDialogIsVisible = false;
+    // NEXT-668 - Can't submit more than one feedback on the same page
+    // reload the feedback form, away from thank-you, to empty form again,
+    // by setting it's src to itself, to force reload - in one line. 
+    //   http://stackoverflow.com/questions/4249809
+    $( '#feedback_dialog iframe' ).attr( 'src', function ( i, val ) { return val; });
 
     return false;
 };

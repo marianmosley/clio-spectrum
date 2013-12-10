@@ -11,21 +11,31 @@ module Spectrum
         @q = options['q'] || raise("No query string specified")
         @rows = (options['rows'] || 10).to_i
         @start = (options['start'] || 0).to_i
+        @sitesearch = options['sitesearch'] || ''
         @search_url = options.delete('search_url')
         @errors = nil
-        Rails.logger.info "[Spectrum][GoogleApp] params: #{search_url}"
-        begin 
+        Rails.logger.debug "[Spectrum][GoogleApp] params: #{search_url}"
+        begin
           @raw_xml = Nokogiri::XML(HTTPClient.new.get_content(search_url))
           @documents = @raw_xml.css("R").collect { |xml_node| LibraryWeb::Document.new(xml_node) }
           @count = @raw_xml.at_css("M") ? @raw_xml.at_css("M").content.to_i : 0
-        rescue Exception => e
-          Rails.logger.error "[Spectrum][GoogleApp] error: #{e.message}"
-          @errors = e.message
+        rescue => ex
+          Rails.logger.error "[Spectrum][GoogleApp] error: #{ex.message}"
+          @errors = ex.message
         end
       end
 
-      def results
-        documents
+      # unused?
+      # def results
+      #   documents
+      # end
+
+      def current_page
+        (@start.div @rows) + 1
+      end
+
+      def page_size
+        @rows || 10
       end
 
       def search_path
@@ -40,10 +50,6 @@ module Spectrum
         [[@q, library_web_index_path()]]
       end
 
-      def previous_page?
-        @start > 1
-      end
-
       def start_item
         [@start + 1, total_items].min
       end
@@ -51,32 +57,35 @@ module Spectrum
       def end_item
         [@start + @rows, total_items].min
       end
-    
-      def total_pages
-        (total_items / @rows.to_f).ceil
-      end
 
+      # unused?
+      # def total_pages
+      #   (total_items / @rows.to_f).ceil
+      # end
 
-      def previous_page_path
-        search_merge('start' => [@start - @rows, 1].max)
-      end
+      # unused?
+      # def page_count
+      #   (@count / @rows) + 1
+      # end
+
 
       def next_page?
         end_item < total_items
-      end
-
-      def next_page_path
-        search_merge('start' => @start + @rows)
       end
 
       def previous_page?
         start_item > 1 && total_items > 1
       end
 
+      # unused?
+      # def previous_page?
+      #   @start > 1
+      # end
 
-      def page
-        (@start / @rows) + 1
-      end
+      # unused?
+      # def page
+      #   (@start / @rows) + 1
+      # end
 
       def successful?
         @errors.nil?
@@ -86,40 +95,60 @@ module Spectrum
         @count
       end
 
+      # unused?
+      # def page_size
+      #   @rows
+      # end
 
-      def page_size
-        @rows
-      end
 
-
-      def previous_page
+      def previous_page_path
         search_merge('start' => [@start - @rows, 0].max)
       end
 
-      def next_page
-        search_merge('start' => [@start + @rows, @count].min)
+      def next_page_path
+        search_merge('start' => @start + @rows)
+      end
+
+      # List of paging options, turned into a drop-down in summon's sorting/paging partial
+      def page_size_with_links
+        [10,25,50,100].collect do |page_size|
+          # do math so that current first item is still on screen.
+          # (use zero-based params for talking to GA)
+          new_page_number = @start.div page_size
+          new_start_item = new_page_number * page_size
+          [ search_merge('rows' => page_size, 'start' => new_start_item), page_size]
+        end
       end
 
 
-      def page_count
-        (@count / @rows) + 1
-      end
-
-      def set_page(page)
-        new_page = [[1, page.to_i].max, page_count].min
-        search_merge('start' => @rows * (new_page - 1))
-      end
       def search_url
+        default_params = {
+          'site'    => 'CUL_LibraryWeb',
+          'as_dt'   => 'i',
+          'client'  => 'cul_libraryweb',
+          'output'  => 'xml',
+          'ie'      => 'UTF-8',
+          'oe'      => 'UTF-8',
+          'filter'  => '0',
+          'sort'    => 'date:D:L:dl',
+          'x'       => '0',
+          'y'       => '0',
+        }
 
-        "http://search.columbia.edu/search?site=CUL_LibraryWeb&sitesearch=&as_dt=i&client=cul_libraryweb&output=xml&ie=UTF-8&oe=UTF-8&filter=0&sort=date%3AD%3AL%3Adl&num=#{@rows}&x=0&y=0&q=#{CGI::escape(@q)}&start=#{@start}"
+        url = "http://search.columbia.edu/search?#{default_params.to_query}"
+        url += "&sitesearch=#{@sitesearch}"
+        url += "&num=#{@rows}"
+        url += "&start=#{@start}"
+        url += "&q=#{CGI::escape(@q)}"
+        url
       end
 
       private
 
-
       def search_merge(params = {})
         library_web_index_path(@params.merge(params))
       end
+
     end
   end
 end

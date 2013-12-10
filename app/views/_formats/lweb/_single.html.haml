@@ -1,7 +1,16 @@
+- display_title = document.title ||= File.basename(document.url.first)
+
 .result.document
-    
-  .title= link_to document.title.html_safe, document.url.listify.first.html_safe
 
-  .lweb_summary=document.summary.html_safe
+  .row-fluid
+    .title.span12
 
-      
+      .item_anchor
+        = render '/item_number', :counter => counter
+
+      .item_number_allowance
+        = link_to display_title.html_safe, document.url.listify.first.html_safe
+
+  .lweb_summary.item_select_allowance=document.summary.html_safe
+
+

@@ -1,3 +1,10 @@
+# ItemAlerts are messages about access-restrictions, outages, etc..
+# 
+# They are authored by a restricted set of authorized users, and are
+# attached to a particular item-id, with a start- and end- time.
+# 
+# The item-id does not have to be a Voyager ID.  Item Alerts are in
+# theory applicable to non-catalog datasources.
 class ItemAlertsController < ApplicationController
   check_authorization
   load_and_authorize_resource
@@ -20,8 +27,8 @@ class ItemAlertsController < ApplicationController
   # GET /item_alerts/1
   # GET /item_alerts/1.json
   def show
-    authorize! :read, @item_alert
-    @item_alert = ItemAlert.find(params[:id])
+    # authorize! :read, @item_alert
+    # @item_alert = ItemAlert.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -67,11 +74,17 @@ class ItemAlertsController < ApplicationController
 
     respond_to do |format|
       if @item_alert.save
-        format.html { redirect_to @item_alert, notice: 'Item alert was successfully created.' }
-        format.json { render json: @item_alert, status: :created, location: @item_alert }
+        format.html {
+          redirect_to @item_alert, notice: 'Item alert was successfully created.'
+        }
+        format.json {
+          render json: @item_alert, status: :created, location: @item_alert
+        }
       else
-        format.html { render action: "new" }
-        format.json { render json: @item_alert.errors, status: :unprocessable_entity }
+        format.html { render "new" }
+        format.json {
+          render json: @item_alert.errors, status: :unprocessable_entity
+        }
       end
     end
   end
@@ -84,11 +97,15 @@ class ItemAlertsController < ApplicationController
 
     respond_to do |format|
       if @item_alert.update_attributes(params[:item_alert])
-        format.html { redirect_to @item_alert, notice: 'Item alert was successfully updated.' }
+        format.html {
+          redirect_to @item_alert, notice: 'Item alert was successfully updated.'
+        }
         format.json { head :no_content }
       else
-        format.html { render action: "edit" }
-        format.json { render json: @item_alert.errors, status: :unprocessable_entity }
+        format.html { render "edit" }
+        format.json {
+          render json: @item_alert.errors, status: :unprocessable_entity
+        }
       end
     end
   end

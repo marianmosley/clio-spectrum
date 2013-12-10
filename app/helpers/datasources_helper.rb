@@ -1,6 +1,6 @@
 #encoding: UTF-8
 module DatasourcesHelper
-  
+
 
   def datasource_list(category = :all)
     results = []
@@ -13,20 +13,23 @@ module DatasourcesHelper
     !(params['q'].to_s.empty? && params.keys.all? { |k| !k.include?('s.') } && params['f'].to_s.empty? && params['commit'].to_s.empty?)
 
   end
-  
+
   def add_all_datasource_landing_pages
     content_tag('div', :class => 'landing_pages') do
       datasource_list(:all).collect do |source|
         datasource_landing_page(source)
       end.join('').html_safe
     end
-  
+
   end
 
   def datasource_landing_page(source)
-    classes = ['landing_page', source] 
-    classes << 'selected' if source == @active_source 
-    content_tag(:div, render(:partial => "/_search/landing_pages/#{source}"), :class => classes.join(' '))
+    classes = ['landing_page', source]
+    classes << 'selected' if source == @active_source
+    search_config = SEARCHES_CONFIG['sources'][source]
+    warning = search_config ? search_config['warning'] : nil;
+    content_tag(:div, render(:partial => "/_search/landing_pages/#{source}", :locals => {warning: warning}), :class => classes.join(' '))
+    # content_tag(:div, render(:partial => "/_search/landing_pages/#{source}"), :class => classes.join(' '))
   end
 
   def datasources_active_list(options = {})
@@ -50,25 +53,27 @@ module DatasourcesHelper
       :active => active,
       :query => params['q'] || params['s.q'] || ""
     }
-    
+
     has_facets = source_has_facets?(active)
     options[:all_sources] = !active_query? || !has_facets
 
     result = []
-    result |= datasources_active_list(options).collect { |src| datasource_item(src,options) }
+    result |= datasources_active_list(options).collect { |src|
+      datasource_item(src,options)
+    }
 
     unless (hidden_datasources = datasources_hidden_list(options)).empty?
-      result << content_tag(:li, link_to("More", "#"),  :id => "datasource_expand")
+      result << content_tag(:li, link_to("More...", "#"),  :id => "datasource_expand")
 
       sub_results = hidden_datasources.collect { |src| datasource_item(src,options) }
-      
-      sub_results << content_tag(:li, link_to("Fewer", "#", :id => "datasource_contract"))
+
+      sub_results << content_tag(:li, link_to("Fewer...", "#"), :id => "datasource_contract")
       result << content_tag(:ul, sub_results.join('').html_safe, :id => 'expanded_datasources')
     end
 
     landing_class = options[:all_sources] ? 'landing datasource_list' : 'datasource_list'
     landing_class += " no_facets" unless has_facets
-    sidebar_items.unshift(content_tag(:ul, result.join('').html_safe, :id => "datasources", :class => landing_class))
+    clio_sidebar_items.unshift(content_tag(:ul, result.join('').html_safe, :id => "datasources", :class => landing_class))
   end
 
   def sidebar_span(source = @active_source)
@@ -115,7 +120,7 @@ module DatasourcesHelper
       when 'dissertations'
         dissertations_index_path(:q => query)
       when 'newspapers'
-        newspapers_index_path(:q => query)
+        newspapers_index_path(:q => query, 'new_search' => true)
       when 'new_arrivals'
         new_arrivals_index_path(:q => query)
       when 'academic_commons'
@@ -128,7 +133,14 @@ module DatasourcesHelper
     end
 
     raise "no source data found for #{source}" unless DATASOURCES_CONFIG['datasources'][source]
-    content_tag(:li, link_to(DATASOURCES_CONFIG['datasources'][source]['name'], href, :class => classes.join(" ")),  :source => source, :class => li_classes.join(" "))
+    content_tag(:li,
+      link_to(DATASOURCES_CONFIG['datasources'][source]['name'],
+          href,
+          :class => classes.join(" ")
+      ),
+      :source => source,
+      :class => li_classes.join(" ")
+    )
 
 
 
@@ -143,4 +155,5 @@ module DatasourcesHelper
 
     link_to title, "#", options
   end
+
 end

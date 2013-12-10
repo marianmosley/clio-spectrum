@@ -1,11 +1,28 @@
-= add_row('Restricted', document.get("database_restrictions_display"))
--#= add_row('Alert', document.get("database_alert".collect { |alert| )
+
+-# CONTROLS HOW DATABASE RECORDS SHOW IN SEARCH RESULTS LIST
+
+-# Database note/alerts of type "alert" show up w/out key, with special styling
+- if document.get("_active_item_alert_count") && document.get("_active_item_alert_count") > 0
+  - Array.wrap(document.get("_item_alerts")[:alert]).each do | alert |
+    - if alert.active?
+      .span12.alert_alert
+        = "ALERT: #{alert[:message]}".html_safe
+  - Array.wrap(document.get("_item_alerts")[:access_requirements]).each do | access_requirement |
+    - if access_requirement.active?
+      = add_row('Access Requirements', access_requirement[:message], :spans => [3,9] )
+
+-# = add_row('Restricted', document.get("database_restrictions_display"))
 = add_row('Author', document.get("author_display"))
 = add_row('Published', document.get("full_publisher_display"))
-= add_row('Summary', document.get("database_summary_display"), :expand_to => document.get('summary_display'))
+
+-# switch from "expand_to" to "teaser"
+= add_row('Summary', document.get("summary_display"), :teaser => true)
+
+-# = add_row('Summary', document.get("database_summary_display"), :expand_to => document.get('summary_display'))
+
 - unless (urls =  online_link_hash(document)).empty?
   - non_circ = image_tag("icons/noncirc.png", :class => :availability)
-  - urls = urls.collect { |link| non_circ + link_to(link.first.abbreviate(60), link.last) }
+  - urls = urls.collect { |link| non_circ + link_to(link[:title].abbreviate(60), link[:url]) + content_tag(:span, link[:note], :class => "url_link_note") }
   - urls = urls.first if controller.controller_name == "search"
   = add_row('Online', urls)
 
@@ -13,7 +30,7 @@
 - unless (locations = document["location_display"].listify.reject { |l| l == "Online" }).empty? || document["location_holdings_id_display"].nil?
   .row
     .label Location
-    .value 
+    .value
       - locations = locations.first.listify if controller.controller_name == "search"
       - locations.each_with_index do |location, i|
         - holdings_id = "holding_" + (document["location_holdings_id_display"].listify[i] || document["location_holdings_id_display"].first).to_s if document["location_holdings_id_display"]

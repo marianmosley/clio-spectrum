@@ -1,25 +1,27 @@
--  unless has_search_parameters? 
+
+-  unless has_search_parameters?
   = add_all_datasource_landing_pages
 
 - else
 
-  - @page_title = application_name + " Search Results" 
+  = render partial: '/datasource_warning', locals: {warning: warning}
+
+  - @page_title = application_name + " Search Results"
   - session['search'][:active_source] = @active_source
 
-  - unless @response.nil? 
-    - unless(params[:show_advanced] && params[:q].to_s.empty? && params[:f].nil?)
-      = fix_catalog_links(render('constraints', :localized_params=>params ))
-      
-      = fix_catalog_links(render('sort_and_per_page'))
+  - unless response.nil?
+    = fix_catalog_links(render('constraints', :localized_params=>params ))
 
+    - if @document_list.nil? || @document_list.empty?
+      = render 'no_results_blurb'
+    - else
+      = render 'index_toolbar'
 
-
-
-      = render :partial => 'document_list' 
+      = render 'document_list'
       = fix_catalog_links(render('results_pagination'))
 
-    - sidebar_items << capture do 
-      = render :partial=>'facets' 
+      - clio_sidebar_items << capture do
+        = render 'facets'
 
 
 
