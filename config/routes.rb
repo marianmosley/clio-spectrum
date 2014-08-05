@@ -127,4 +127,8 @@ Clio::Application.routes.draw do
   get 'catalog/:id/librarian_view', :to => "catalog#librarian_view", :as => "librarian_view_catalog"
   get "catalog/endnote", :as => "endnote_catalog"
 
+
+  # to help w/debugging, we need to access via GET (that is, cut & paste URL)
+  # match 'catalog/:id/track(.:format)', via: [:get], to: 'catalog#track'
+  
 end

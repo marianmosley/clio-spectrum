@@ -125,6 +125,7 @@ class CatalogController < ApplicationController
     # puts "SESSION[SEARCH]/BEFORE #{session[:search].inspect}"
     # puts "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
+    session[:search] ||= {}
     session[:search]['counter'] = params[:counter]
 
     # puts "SESSION[SEARCH]/AFTER #{session[:search].inspect}"
