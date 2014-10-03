@@ -9,8 +9,10 @@ Columbia Libraries Unified Search &amp; Discovery
   - install XCode from app store and Xcode command line tools
   - install [mysql]( http://dev.mysql.com/downloads/mysql/ )
   - install [homebrew](http://brew.sh/)
+  
     ````ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"````
   - install git
+  
     ````brew install git````
 
 2.  Get set up with git
@@ -24,6 +26,7 @@ Columbia Libraries Unified Search &amp; Discovery
 
 
 3.  Install [rvm](http://rvm.io/rvm/install)
+
   ````\curl -sSL https://get.rvm.io | bash -s stable --ruby````
   
 4. Install Qt webchain [more information](https://github.com/thoughtbot/capybara-webkit/wiki/Installing-Qt-and-compiling-capybara-webkit)
