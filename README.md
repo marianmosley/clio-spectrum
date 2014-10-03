@@ -6,7 +6,7 @@ Columbia Libraries Unified Search &amp; Discovery
 **Getting started on OSX**
 
 1. Install tools
-  - install XCode from app store and Xcode command line tools 
+  - install XCode from app store and Xcode command line tools
   - install [mysql]( http://dev.mysql.com/downloads/mysql/ )
   - install [homebrew](http://brew.sh/)
     ````ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"````
@@ -14,8 +14,8 @@ Columbia Libraries Unified Search &amp; Discovery
     ````brew install git````
 
 2.  Get set up with git
-  - Create an account on github.com if you don't already have one.
-  - Configure your git user name and email.
+  - Create an account on github.com if you don't already have one
+  - Configure your git user name and email
   ````
   git config --global user.name "Your Name"
   git config --global user.email "your_email@whatever.com"
@@ -30,12 +30,13 @@ Columbia Libraries Unified Search &amp; Discovery
 
   ````brew install qt````
   
-5. Fork Fork the https://github.com/cul/clio-spectrum repo (fork button at top right of github web interface)
+5. Fork the https://github.com/cul/clio-spectrum repo (fork button at top right of github web interface)
 
 6. Clone the new forked repo onto your dev machine
+
   ````git clone https://github.com/yourusername/clio-spectrum````
 
-7. Install config files
+7. Install config files (contact CLIO dev team)
 
 
 
