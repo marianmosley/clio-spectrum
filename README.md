@@ -7,8 +7,8 @@ Columbia Libraries Unified Search &amp; Discovery
 
 1. Install tools
   - install XCode from app store and Xcode command line tools 
-  - install mysql ( http://dev.mysql.com/downloads/mysql/ ) install macports ( If you have fink or darwin ports, you're fine as well)
-  - install homebrew
+  - install [mysql]( http://dev.mysql.com/downloads/mysql/ )
+  - install [homebrew](http://brew.sh/)
     ````ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"````
   - install git
     ````brew install git````
