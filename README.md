@@ -16,10 +16,10 @@ Columbia Libraries Unified Search &amp; Discovery
 2.  Get set up with git
   - Create an account on github.com if you don't already have one.
   - Configure your git user name and email.
-````
-git config --global user.name "Your Name"
-git config --global user.email "your_email@whatever.com"
-````
+  ````
+  git config --global user.name "Your Name"
+  git config --global user.email "your_email@whatever.com"
+  ````
   - Install [github for mac](http://mac.github.com/) (optional) 
 
 
