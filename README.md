@@ -27,8 +27,14 @@ Columbia Libraries Unified Search &amp; Discovery
   ````\curl -sSL https://get.rvm.io | bash -s stable --ruby````
   
 4. Install Qt webchain [more information](https://github.com/thoughtbot/capybara-webkit/wiki/Installing-Qt-and-compiling-capybara-webkit)
-
   ````brew install qt````
   
-5. Install config files
+5. Fork Fork the https://github.com/cul/clio-spectrum repo (fork button at top right of github web interface)
+
+6. Clone the new forked repo onto your dev machine
+  ````git clone https://github.com/yourusername/clio-spectrum````
+
+7. Install config files
+
+
 
