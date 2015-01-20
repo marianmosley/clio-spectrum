@@ -75,7 +75,6 @@ $(document).ready(function() {
     }
   });
 
-
   $(this).bind('copy', function() {
     var selectedText = "";
     if (window.getSelection) {
@@ -90,142 +89,12 @@ $(document).ready(function() {
     return true;
   });
 
-  $(window).load(function(event) {
+});
 
-    // get selected source from sidebar and label from URL
-
-    var source = $(document).find('#sources').find('.datasource_link.selected').text();
-
-    // is it a search result page?
-
-
-    var category = "Search Results Load";
-    var action = source;
-    var label = document.URL;
-    var advanced = false;
-
-    // is there an event stashed away?
-
-    if (sessionStorage.getItem('data-ga-category')){
-      category = sessionStorage.getItem('data-ga-category');
-      action = sessionStorage.getItem('data-ga-action');
-      label = sessionStorage.getItem('data-ga-label');
-      logToConsole("sending stashed event: ga('send','event','"+category+"','"+action+"','"+label+"')");
-      ga('send', 'event', category, action, label, {useBeacon: true});
-      sessionStorage.removeItem('data-ga-category');
-      sessionStorage.removeItem('data-ga-action');
-      sessionStorage.removeItem('data-ga-label');
-      return;
-    }
-
-    if (!$('.result')) {
-      return;
-    }
-
-    if ((getQueryVariable('advanced_operator'))|| (getQueryVariable('form') == 'advanced')){
-      advanced = true;
-    }
-    // zero-hits search?
-
-    if ($('div.result_empty').length > 0){
-      category += " - Zero Hits";
-      if (advanced){
-        action = action + ' Advanced';
-      }
-      else{
-        action = action + ' Basic';
-      }
-      logToConsole("ga('send','event','"+category+"','"+action+"','"+label+"')");
-      ga('send', 'event', category, action, label, {useBeacon: true});
-    }
-    else{
-
-      // return if it is not a search results page
-
-      if ($('.index_toolbar').length === 0 ){
-        return;
-      }
-
-      var hits = 0;
-      var num_hits = 0;
-
-      // Zero Hits Search?
-
-      if ($('.page_entries').length > 0){
-        num_hits = $('.page_entries').text().replace(/ /g,'').replace(/\|/g,'').split('of')[1].trim();
-      }
-      else {
-        num_hits = $('#current_item_info').text().replace(/ /g,'').replace(/\|/g,'').split('of')[1].trim();
-      }
-      if (advanced){
-        action = action + ' Advanced ('+ num_hits+' hits)';
-        advanced_operator = getQueryVariable('advanced_operator')|| ' OR ';
-      }
-      else{
-        action = action + ' Basic ('+ num_hits+' hits)';
-      }
-      logToConsole("ga('send','event','"+category+"','"+action+"','"+label+"')");
-      ga('send', 'event', category, action, label, {useBeacon: true});
-    }
-  });
-
-    //Quicksearch and other aggregate searchresults are loaded by ajax
-
-    $(document).ajaxComplete(function(event, xhr, settings) {
-
-      var resp = jQuery.parseHTML(xhr.responseText);
-      if ($(resp).find('.results_header').length <= 0){
-        return;
-      }
-      var selected = $(document).find('#sources').find('.datasource_link.selected').text();
-      var source='';
-      var src='';
-        source = $(resp).find('div[data-source]').attr('data-source');
-      if (source){
-        src = source.split("_").map(function(i){return i[0].toUpperCase() + i.substring(1)}).join(" ");
-      }
-      var category = "Search Results Load";
-      var action = selected + ': ' + src;
-      var label = document.URL;
-
-      // Zero Hits Search?
-
-      if ($(resp).find('div.result_empty').length > 0){
-        category += " - Zero Hits";
-        logToConsole("ga('send','event','"+category+"','"+action+"','"+label+"')");
-        ga('send', 'event', category, action, label, {useBeacon: true});
-      }
-      else{
-        if (source){
-          num_hits = $(resp).find('div[data-source] > div.result_count').find('a > span.hidden-xs').text();
-          if (num_hits){
-            hits = num_hits;
-          }
-          action += ' ' + hits + " Hits";
-          label = settings.url;
-          logToConsole("ga('send','event','"+category+"','"+action+"','"+label+"')");
-          ga('send', 'event', category, action, label, {useBeacon: true});
-        }
-      }
-
-    });
-
-  });
-
-  function logToConsole(message)
-  {
-    if ($("body").data("rails-env") == 'development')
-      {
-        console.log(message)
-      }
-  }
-function getQueryVariable(variable)
+function logToConsole(message)
 {
-  var query = window.location.search.substring(1);
-  var vars = query.split("&");
-  for (var i=0;i<vars.length;i++) {
-    var pair = vars[i].split("=");
-    if(decodeURI(pair[0]) == variable){return decodeURI(pair[1]);}
-  }
-  return(false);
+  if ($("body").data("rails-env") == 'development')
+    {
+      console.log(message)
+    }
 }
