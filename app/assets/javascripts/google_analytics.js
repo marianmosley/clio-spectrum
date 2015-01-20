@@ -42,37 +42,14 @@ $(document).ready(function() {
     var action = $(this).closest("[data-ga-action]").data("ga-action") || "Click";
     var label = $(this).data("ga-label") || text;
 
-    // if click also activates a page load, stash the values and submit when page reloads
-
-    if (action.match(/Display Options/)||action.match(/Sort by/)||label.match(/MARC View/)){
-      if (label != 'Export to EndNote'){
-        logToConsole("stashing ga('send','event','"+category+"','"+action+"','"+label+"')");
-        sessionStorage.setItem('data-ga-category', category);
-        sessionStorage.setItem('data-ga-action', action);
-        sessionStorage.setItem('data-ga-label', label);
-      }
-      return;
-    }
-
-    var open_new_window = false;
-    // Offsite links will open a new window unless it is a download link
-
-    if ((this.hostname && this.hostname !== location.hostname) && action != "Download Click"){
-      open_new_window = true;
-    }
-
-    if (open_new_window){
-      event.preventDefault(); // don't open the link yet
-    }
+    event.preventDefault(); // don't open the link yet
 
     logToConsole("ga('send','event','"+category+"','"+action+"','"+label+"')");
     ga('send', 'event', category, action, label, {useBeacon: true});
 
-    if (open_new_window){
-      setTimeout(function() { // now wait 300 milliseconds...
-        window.open(href, (!target ? "_blank" : target)); // ...and open in new blank window
-      },300);
-    }
+    setTimeout(function() { // now wait 300 milliseconds...
+      window.open(href, (!target ? "_blank" : target)); // ...and open in new blank window
+    },300);
   });
 
   $(this).bind('copy', function() {
